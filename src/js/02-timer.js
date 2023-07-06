@@ -49,24 +49,26 @@ function addLeadingZero(value) {
   return String(value).padStart(2, '0');
 }
 
-function startTimer(targetDate) {
+function updateTimerFields({ days, hours, minutes, seconds }) {
   const timerFields = document.querySelectorAll('.timer .value');
 
+  timerFields.forEach((field, index) => {
+    const value = [days, hours, minutes, seconds][index];
+    field.textContent = addLeadingZero(value);
+  });
+}
+
+function startTimer(targetDate) {
   const updateTimer = setInterval(() => {
     const currentDate = new Date();
     const timeDifference = targetDate - currentDate;
 
     if (timeDifference <= 0) {
-      clearInterval(updateTimer); // Останавливаем обновление таймера, если достигнута целевая дата
+      clearInterval(updateTimer);
       return;
     }
 
-    const { days, hours, minutes, seconds } = convertMs(timeDifference);
-
-    // Обновляем значения таймера на странице
-    timerFields[0].textContent = addLeadingZero(days);
-    timerFields[1].textContent = addLeadingZero(hours);
-    timerFields[2].textContent = addLeadingZero(minutes);
-    timerFields[3].textContent = addLeadingZero(seconds);
-  }, 1000); // Интервал обновления таймера в 1 секунду (1000 миллисекунд)
+    const timeComponents = convertMs(timeDifference);
+    updateTimerFields(timeComponents);
+  }, 1000);
 }
